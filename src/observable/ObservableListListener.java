@@ -15,6 +15,27 @@ import java.util.List;
  */
 public interface ObservableListListener<E> extends EventListener {
     /**
+     * Notification than a property of an element in this list has changed.
+     * Not all {@code ObservableLists} support this notification. Only
+     * observable lists that return {@code true} from
+     * {@code supportsElementPropertyChanged} send this notification.
+     *
+     * @param list the {@code ObservableList} that has changed
+     * @param index the index of the element that changed
+     */
+    void listElementPropertyChanged(ObservableList<? extends E> list, int index);
+
+    /**
+     * Notification that an element has been replaced by another in the list.
+     *
+     * @param list the {@code ObservableList} that has changed
+     * @param index the index of the element that was replaced
+     * @param oldElement the element at the index before the change
+     */
+    void listElementReplaced(ObservableList<? extends E> list, int index,
+                                    Object oldElement);
+
+    /**
      * Notification that elements have been added to the list.
      *
      * @param list the {@code ObservableList} that has changed
@@ -32,25 +53,4 @@ public interface ObservableListListener<E> extends EventListener {
      */
     void listElementsRemoved(ObservableList<? extends E> list, int index,
                                     List<? extends E> oldElements);
-
-    /**
-     * Notification that an element has been replaced by another in the list.
-     *
-     * @param list the {@code ObservableList} that has changed
-     * @param index the index of the element that was replaced
-     * @param oldElement the element at the index before the change
-     */
-    void listElementReplaced(ObservableList<? extends E> list, int index,
-                                    Object oldElement);
-
-    /**
-     * Notification than a property of an element in this list has changed.
-     * Not all {@code ObservableLists} support this notification. Only
-     * observable lists that return {@code true} from
-     * {@code supportsElementPropertyChanged} send this notification.
-     *
-     * @param list the {@code ObservableList} that has changed
-     * @param index the index of the element that changed
-     */
-    void listElementPropertyChanged(ObservableList<? extends E> list, int index);
 }

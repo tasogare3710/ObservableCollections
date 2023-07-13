@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023- tasogare. All rights reserved. 
+ * Copyright (C) 2023- tasogare. All rights reserved.
  */
 package observable;
 
@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * <p>
  * A {@linkplain Set} that notifies listeners of changes to the {@linkplain Set}.
- * 
+ *
  * @param <E> set element type
  */
 public interface ObservableSet<E> extends Set<E> {
