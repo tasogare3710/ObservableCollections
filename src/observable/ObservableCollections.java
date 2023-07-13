@@ -40,6 +40,21 @@ public final class ObservableCollections {
     }
 
     /**
+     * <p>Creates and returns an {@link ObservableSet} wrapping the supplied
+	 * {@linkplain Set}.
+	 * 
+     * @param <E> set element type.
+     * @param set
+     * @return
+     */
+    public static <E> ObservableSet<E> observableMap(Set<E> set) {
+        if (set == null) {
+            throw new IllegalArgumentException("Set must be non-null");
+        }
+        return new ObservableSetImpl<E>(set);
+    }
+
+    /**
      * Creates and returns an {@code ObservableList} wrapping the supplied
      * {@code List}.
      *
@@ -108,6 +123,141 @@ public final class ObservableCollections {
             }
             list.fireElementChanged(index);
         }
+    }
+
+    private static final class ObservableSetImpl<E>  extends AbstractSet<E> 
+    implements ObservableSet<E> {
+    	private class SetIterator implements Iterator<E> {
+            private Iterator<E> realIterator;
+            private E last;
+
+            SetIterator(){
+    			realIterator = set.iterator();
+    		}
+
+    		@Override
+			public boolean hasNext() {
+				return realIterator.hasNext();
+			}
+
+			@Override
+			public E next() {
+                last = realIterator.next();
+                return last;
+			}
+
+            @Override
+            public void remove() {
+                if (last == null) {
+                    throw new IllegalStateException();
+                }
+                var toRemove = last;
+                last = null;
+                ObservableSetImpl.this.remove(toRemove);
+            }
+    	}
+
+    	private Set<E> set;
+        private List<ObservableSetListener<? super E>> listeners;
+
+        ObservableSetImpl(Set<E> set){
+        	this.set = set;
+        	listeners = new CopyOnWriteArrayList<ObservableSetListener<? super E>>();
+        }
+
+        @Override
+		public int size() {
+			return set.size();
+		}
+
+		@Override
+		public Iterator<E> iterator() {
+			return new SetIterator();
+		}
+
+		@Override
+		public boolean add(E e) {
+			boolean result = set.add(e);
+			if(result) {
+                for (var listener : listeners) {
+                	listener.setElementAdded(this, e);
+                }
+			}
+			return result;
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+	        boolean modified = false;
+			for(var e: c) {
+				modified |= add(e);
+			}
+			return modified;
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			boolean result = set.remove(o);
+			if(result) {
+                for (var listener : listeners) {
+                	listener.setElementRemoved(this, o);
+                }
+			}
+			return result;
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+	        boolean modified = false;
+			for(var e: c) {
+				modified |= remove(e);
+			}
+			return modified;			
+		}
+
+		@Override
+        public void clear() {
+            var iterator = iterator();
+            while (iterator.hasNext()) {
+                iterator.next();
+                iterator.remove();
+            }
+        }
+
+		@Override
+        public boolean contains(Object o) {
+			return set.contains(o);
+		}
+
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			return set.containsAll(c);
+		}
+
+        @Override
+        public boolean isEmpty() {
+            return set.isEmpty();
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return set.toArray(a);
+        }
+
+        @Override
+        public Object[] toArray() {
+            return set.toArray();
+        }
+
+		@Override
+		public void addObservableSetListener(ObservableSetListener<? super E> listener) {
+			listeners.add(listener);
+		}
+
+		@Override
+		public void removeObservableSetListener(ObservableSetListener<? super E> listener) {
+			listeners.remove(listener);			
+		}
     }
 
     private static final class ObservableMapImpl<K,V> extends AbstractMap<K,V> 
