@@ -3,7 +3,7 @@
  * subject to license terms.
  */
 
-package org.jdesktop.observablecollections;
+package observable;
 
 import java.util.List;
 
@@ -18,14 +18,14 @@ public interface ObservableList<E> extends List<E> {
      *
      * @param listener the listener to add
      */
-    public void addObservableListListener(ObservableListListener listener);
+    public void addObservableListListener(ObservableListListener<? super E> listener);
 
     /**
      * Removes a listener.
      *
      * @param listener the listener to remove
      */
-    public void removeObservableListListener(ObservableListListener listener);
+    public void removeObservableListListener(ObservableListListener<? super E> listener);
 
     /**
      * Returns {@code true} if this list sends out notification when

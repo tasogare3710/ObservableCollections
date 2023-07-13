@@ -3,7 +3,7 @@
  * subject to license terms.
  */
 
-package org.jdesktop.observablecollections;
+package observable;
 
 import java.util.EventListener;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author sky
  */
-public interface ObservableListListener extends EventListener {
+public interface ObservableListListener<E> extends EventListener {
     /**
      * Notification that elements have been added to the list.
      *
@@ -21,7 +21,7 @@ public interface ObservableListListener extends EventListener {
      * @param index the index the elements were added to
      * @param length the number of elements that were added
      */
-    public void listElementsAdded(ObservableList list, int index, int length);
+    void listElementsAdded(ObservableList<? extends E> list, int index, int length);
 
     /**
      * Notification that elements have been removed from the list.
@@ -30,8 +30,8 @@ public interface ObservableListListener extends EventListener {
      * @param index the starting index the elements were removed from
      * @param oldElements a list containing the elements that were removed.
      */
-    public void listElementsRemoved(ObservableList list, int index,
-                                    List oldElements);
+    void listElementsRemoved(ObservableList<? extends E> list, int index,
+                                    List<? extends E> oldElements);
 
     /**
      * Notification that an element has been replaced by another in the list.
@@ -40,7 +40,7 @@ public interface ObservableListListener extends EventListener {
      * @param index the index of the element that was replaced
      * @param oldElement the element at the index before the change
      */
-    public void listElementReplaced(ObservableList list, int index,
+    void listElementReplaced(ObservableList<? extends E> list, int index,
                                     Object oldElement);
 
     /**
@@ -52,5 +52,5 @@ public interface ObservableListListener extends EventListener {
      * @param list the {@code ObservableList} that has changed
      * @param index the index of the element that changed
      */
-    public void listElementPropertyChanged(ObservableList list, int index);
+    void listElementPropertyChanged(ObservableList<? extends E> list, int index);
 }

@@ -3,14 +3,14 @@
  * subject to license terms.
  */
 
-package org.jdesktop.observablecollections;
+package observable;
 
 /**
  * Notification types from an {@code ObservableMap}.
  *
  * @author sky
  */
-public interface ObservableMapListener {
+public interface ObservableMapListener<K,V> {
     /**
      * Notification that the value of an existing key has changed.
      *
@@ -18,7 +18,7 @@ public interface ObservableMapListener {
      * @param key the key
      * @param lastValue the previous value
      */
-    public void mapKeyValueChanged(ObservableMap map, Object key,
+    void mapKeyValueChanged(ObservableMap<? extends K,? extends V> map, Object key,
                                    Object lastValue);
 
     /**
@@ -27,7 +27,7 @@ public interface ObservableMapListener {
      * @param map the {@code ObservableMap} that changed
      * @param key the key
      */
-    public void mapKeyAdded(ObservableMap map, Object key);
+    void mapKeyAdded(ObservableMap<? extends K,? extends V> map, Object key);
 
     /**
      * Notification that a key has been removed
@@ -36,7 +36,7 @@ public interface ObservableMapListener {
      * @param key the key
      * @param value value for key before key was removed
      */
-    public void mapKeyRemoved(ObservableMap map, Object key, Object value);
+    void mapKeyRemoved(ObservableMap<? extends K,? extends V> map, Object key, Object value);
 
     // PENDING: should we special case clear?
 }

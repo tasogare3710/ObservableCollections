@@ -3,7 +3,7 @@
  * subject to license terms.
  */
 
-package org.jdesktop.observablecollections;
+package observable;
 
 import java.util.Map;
 
@@ -18,12 +18,12 @@ public interface ObservableMap<K,V> extends Map<K,V> {
      *
      * @param listener the listener to add
      */
-    public void addObservableMapListener(ObservableMapListener listener);
+    public void addObservableMapListener(ObservableMapListener<? super K,? super V> listener);
 
     /**
      * Removes a listener from this observable map.
      *
      * @param listener the listener to remove
      */
-    public void removeObservableMapListener(ObservableMapListener listener);
+    public void removeObservableMapListener(ObservableMapListener<? super K,? super V> listener);
 }
