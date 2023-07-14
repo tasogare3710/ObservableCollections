@@ -13,28 +13,27 @@ import java.util.List;
  * @author sky
  */
 public interface ObservableList<E> extends List<E> {
-    /**
-     * Adds a listener that is notified when the list changes.
-     *
-     * @param listener the listener to add
-     */
-    public void addObservableListListener(ObservableListListener<? super E> listener);
+	/**
+	 * Adds a listener that is notified when the list changes.
+	 *
+	 * @param listener the listener to add
+	 */
+	public void addObservableListListener(ObservableListListener<? super E> listener);
 
-    /**
-     * Removes a listener.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeObservableListListener(ObservableListListener<? super E> listener);
+	/**
+	 * Removes a listener.
+	 *
+	 * @param listener the listener to remove
+	 */
+	public void removeObservableListListener(ObservableListListener<? super E> listener);
 
-    /**
-     * Returns {@code true} if this list sends out notification when
-     * the properties of an element change. This method may be used
-     * to determine if a listener needs to be installed on each of
-     * the elements of the list.
-     *
-     * @return {@code true} if this list sends out notification when
-     *         the properties of an element change
-     */
-    public boolean supportsElementPropertyChanged();
+	/**
+	 * Returns {@code true} if this list sends out notification when the properties
+	 * of an element change. This method may be used to determine if a listener
+	 * needs to be installed on each of the elements of the list.
+	 *
+	 * @return {@code true} if this list sends out notification when the properties
+	 *         of an element change
+	 */
+	public boolean supportsElementPropertyChanged();
 }

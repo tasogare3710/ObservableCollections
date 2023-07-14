@@ -12,18 +12,18 @@ import java.util.Map;
  *
  * @author sky
  */
-public interface ObservableMap<K,V> extends Map<K,V> {
-    /**
-     * Adds a listener to this observable map.
-     *
-     * @param listener the listener to add
-     */
-    public void addObservableMapListener(ObservableMapListener<? super K,? super V> listener);
+public interface ObservableMap<K, V> extends Map<K, V> {
+	/**
+	 * Adds a listener to this observable map.
+	 *
+	 * @param listener the listener to add
+	 */
+	public void addObservableMapListener(ObservableMapListener<? super K, ? super V> listener);
 
-    /**
-     * Removes a listener from this observable map.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeObservableMapListener(ObservableMapListener<? super K,? super V> listener);
+	/**
+	 * Removes a listener from this observable map.
+	 *
+	 * @param listener the listener to remove
+	 */
+	public void removeObservableMapListener(ObservableMapListener<? super K, ? super V> listener);
 }

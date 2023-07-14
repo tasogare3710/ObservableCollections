@@ -3,5 +3,5 @@
  *
  */
 module observable.collections {
-    exports observable;
+	exports observable;
 }

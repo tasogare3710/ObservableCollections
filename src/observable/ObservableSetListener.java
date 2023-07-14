@@ -10,6 +10,7 @@ package observable;
  * @param <E> set element type
  */
 public interface ObservableSetListener<E> {
-    void setElementAdded(ObservableSet<? extends E> set, Object element);
-    void setElementRemoved(ObservableSet<? extends E> set, Object element);
+	void setElementAdded(ObservableSet<? extends E> set, Object element);
+
+	void setElementRemoved(ObservableSet<? extends E> set, Object element);
 }
