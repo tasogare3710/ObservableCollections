@@ -7,18 +7,17 @@ package observable;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 /**
  * {@code ObservableCollections} provides factory methods for creating
@@ -28,244 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author sky
  */
 public final class ObservableCollections {
-	private static final class Accessor<T> implements Collection<T> {
-		private final T[] array;
-
-		private Accessor(T[] array) {
-			this.array = array;
-		}
-
-		@Override
-		public boolean add(T e) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends T> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void clear() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean contains(Object o) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean containsAll(Collection<?> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return size() == 0;
-		}
-
-		@Override
-		public Iterator<T> iterator() {
-			return new Iterator<>() {
-				private int length = array.length;
-				private int index = 0;
-
-				@Override
-				public boolean hasNext() {
-					return index < length;
-				}
-
-				@Override
-				public T next() {
-					return array[index++];
-				}
-			};
-		}
-
-		@Override
-		public boolean remove(Object o) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean removeAll(Collection<?> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public int size() {
-			return array.length;
-		}
-
-		@Override
-		public Object[] toArray() {
-			return array;
-		}
-
-		@SuppressWarnings({ "unchecked", "hiding" })
-		@Override
-		public <T> T[] toArray(T[] a) {
-			return (T[]) array;
-		}
-	}
-
-	/**
-	 * {@code ObservableListHelper} is created by {@code observableListHelper}, and
-	 * useful when changes to individual elements of the list can be tracked.
-	 *
-	 * @see #observableListHelper
-	 */
-	public static final class ObservableListHelper<E> {
-		private final ObservableListImpl<E> list;
-
-		ObservableListHelper(ObservableListImpl<E> list) {
-			this.list = list;
-		}
-
-		/**
-		 * Sends notification that the element at the specified index has changed.
-		 *
-		 * @param index the index of the element that has changed
-		 * @throws ArrayIndexOutOfBoundsException if index is outside the range of the
-		 *                                        {@code List} ({@code < 0 || >= size})
-		 */
-		public void fireElementChanged(int index) {
-			if (index < 0 || index >= list.size()) {
-				throw new ArrayIndexOutOfBoundsException("Illegal index");
-			}
-			list.fireElementChanged(index);
-		}
-
-		/**
-		 * Returns the {@code ObservableList}.
-		 *
-		 * @return the observable list
-		 */
-		public ObservableList<E> getObservableList() {
-			return list;
-		}
-	}
-
-	private static final class ObservableListImpl<E> extends AbstractList<E> implements ObservableList<E> {
-		private final boolean supportsElementPropertyChanged;
-		private List<E> list;
-		private List<ObservableListListener<? super E>> listeners;
-
-		ObservableListImpl(List<E> list, boolean supportsElementPropertyChanged) {
-			this.list = list;
-			listeners = new CopyOnWriteArrayList<>();
-			this.supportsElementPropertyChanged = supportsElementPropertyChanged;
-		}
-
-		@Override
-		public void add(int index, E element) {
-			list.add(index, element);
-			modCount++;
-			for (var listener : listeners) {
-				listener.listElementsAdded(this, index, 1);
-			}
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends E> c) {
-			return addAll(size(), c);
-		}
-
-		@Override
-		public boolean addAll(int index, Collection<? extends E> c) {
-			if (list.addAll(index, c)) {
-				modCount++;
-				for (var listener : listeners) {
-					listener.listElementsAdded(this, index, c.size());
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void addObservableListListener(ObservableListListener<? super E> listener) {
-			listeners.add(listener);
-		}
-
-		@Override
-		public void clear() {
-			var dup = new ArrayList<>(list);
-			list.clear();
-			modCount++;
-			if (dup.size() != 0) {
-				for (var listener : listeners) {
-					listener.listElementsRemoved(this, 0, dup);
-				}
-			}
-		}
-
-		@Override
-		public boolean containsAll(Collection<?> c) {
-			return list.containsAll(c);
-		}
-
-		private void fireElementChanged(int index) {
-			for (var listener : listeners) {
-				listener.listElementPropertyChanged(this, index);
-			}
-		}
-
-		@Override
-		public E get(int index) {
-			return list.get(index);
-		}
-
-		@Override
-		public E remove(int index) {
-			var oldValue = list.remove(index);
-			modCount++;
-			for (var listener : listeners) {
-				listener.listElementsRemoved(this, index, java.util.Collections.singletonList(oldValue));
-			}
-			return oldValue;
-		}
-
-		@Override
-		public void removeObservableListListener(ObservableListListener<? super E> listener) {
-			listeners.remove(listener);
-		}
-
-		@Override
-		public E set(int index, E element) {
-			var oldValue = list.set(index, element);
-			for (var listener : listeners) {
-				listener.listElementReplaced(this, index, oldValue);
-			}
-			return oldValue;
-		}
-
-		@Override
-		public int size() {
-			return list.size();
-		}
-
-		@Override
-		public boolean supportsElementPropertyChanged() {
-			return supportsElementPropertyChanged;
-		}
-
-		@Override
-		public Object[] toArray() {
-			return list.toArray();
-		}
-
-		@Override
-		public <T> T[] toArray(T[] a) {
-			return list.toArray(a);
-		}
-	}
-
 	private static final class ObservableMapImpl<K, V> extends AbstractMap<K, V> implements ObservableMap<K, V> {
 		private class EntryIterator implements Iterator<Map.Entry<K, V>> {
 			private Iterator<Map.Entry<K, V>> realIterator;
@@ -570,43 +331,7 @@ public final class ObservableCollections {
 		}
 	}
 
-	public static <E> ObservableList<E> concat(ObservableList<E>... lists) {
-		if (lists.length == 0) {
-			return observableArrayList();
-		}
-
-		if (lists.length == 1) {
-			return observableList(lists[0]);
-		}
-
-		var backingList = new ArrayList<E>();
-		for (var s : lists) {
-			backingList.addAll(s);
-		}
-		return observableList(backingList);
-	}
-
-	public static <T> void copy(ObservableList<? super T> dest, List<? extends T> src) {
-		final int srcSize = src.size();
-		if (srcSize > dest.size()) {
-			throw new IndexOutOfBoundsException("Source does not fit in dest");
-		}
-
-		@SuppressWarnings("unchecked")
-		var destArray = (T[]) dest.toArray();
-		System.arraycopy(src.toArray(), 0, destArray, 0, srcSize);
-		dest.addAll(new Accessor<>(destArray));
-	}
-
-	public static <T> void fill(ObservableList<? super T> list, T obj) {
-		@SuppressWarnings("unchecked")
-		var newContent = (T[]) new Object[list.size()];
-		Arrays.fill(newContent, obj);
-		list.clear();
-		list.addAll(new Accessor<>(newContent));
-	}
-
-	private static <E> ObservableList<E> observableArrayList() {
+	static <E> ObservableList<E> observableArrayList() {
 		return observableList(new ArrayList<>());
 	}
 
@@ -674,76 +399,8 @@ public final class ObservableCollections {
 		return new ObservableSetImpl<>(set);
 	}
 
-	public static <T> boolean replaceAll(ObservableList<T> list, T oldVal, T newVal) {
-		@SuppressWarnings("unchecked")
-		var newContent = (T[]) list.toArray();
-		boolean modified = false;
-		for (int i = 0; i < newContent.length; ++i) {
-			if (newContent[i].equals(oldVal)) {
-				newContent[i] = newVal;
-				modified = true;
-			}
-		}
-		if (modified) {
-			list.clear();
-			list.addAll(new Accessor<>(newContent));
-		}
-		return modified;
-	}
-
-	public static <T> void reverse(ObservableList<T> list) {
-		@SuppressWarnings("unchecked")
-		var newContent = (T[]) list.toArray();
-		for (int i = 0; i < newContent.length / 2; ++i) {
-			var tmp = newContent[i];
-			newContent[i] = newContent[newContent.length - i - 1];
-			newContent[newContent.length - i - 1] = tmp;
-		}
-		list.clear();
-		list.addAll(new Accessor<>(newContent));
-	}
-
-	public static <T> void rotate(ObservableList<T> list, int distance) {
-		@SuppressWarnings("unchecked")
-		var newContent = (T[]) list.toArray();
-
-		int size = list.size();
-		distance = distance % size;
-		if (distance < 0) {
-			distance += size;
-		}
-
-		if (distance == 0) {
-			return;
-		}
-
-		for (int cycleStart = 0, nMoved = 0; nMoved != size; cycleStart++) {
-			var displaced = newContent[cycleStart];
-			T tmp;
-			int i = cycleStart;
-			do {
-				i += distance;
-				if (i >= size) {
-					i -= size;
-				}
-				tmp = newContent[i];
-				newContent[i] = displaced;
-				displaced = tmp;
-				nMoved++;
-			} while (i != cycleStart);
-		}
-		list.clear();
-		list.addAll(new Accessor<>(newContent));
-	}
-
-	public static <T extends Comparable<? super T>> void sort(ObservableList<T> list) {
-		sort(list, Comparator.naturalOrder());
-	}
-
-	public static <T> void sort(ObservableList<T> list, Comparator<? super T> comparator) {
-		var newContent = new ArrayList<>(list);
-		newContent.sort(comparator);
-		list.clear();
-		list.addAll(newContent);
+	@SuppressWarnings("unchecked")
+	public static <E> Collector<E, ObservableList<E>, ObservableList<E>> toObservableList(Supplier<List<E>> supplier) {
+		return Collector.of(ObservableList.species(supplier), List::add, ObservableList::concat);
 	}
 }

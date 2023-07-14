@@ -2,15 +2,35 @@ package observable;
 
 import static java.util.Objects.requireNonNull;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-public interface WeakListener {
-	public static final class List<E> implements WeakListener, ObservableListListener<E> {
+public interface WeakListener<T> {
+	public static final class List<E> implements WeakListener<ObservableListListener<E>>, ObservableListListener<E> {
 		private final WeakReference<ObservableListListener<E>> ref;
 
 		public List(ObservableListListener<E> listener) {
-			requireNonNull(listener);
-			ref = new WeakReference<>(listener);
+			ref = new WeakReference<>(requireNonNull(listener));
+		}
+
+		public List(ObservableListListener<E> listener, ReferenceQueue<ObservableListListener<E>> queue) {
+			ref = new WeakReference<>(requireNonNull(listener), queue);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			ref.clear();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean enqueue() {
+			return ref.enqueue();
 		}
 
 		@Override
@@ -54,18 +74,46 @@ public interface WeakListener {
 			}
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public final boolean refersTo(ObservableListListener<E> obj) {
+			return ref.refersTo(obj);
+		}
+
 		@Override
 		public boolean wasGarbageCollected() {
 			return ref.get() == null;
 		}
 	}
 
-	public static final class Map<K, V> implements WeakListener, ObservableMapListener<K, V> {
+	public static final class Map<K, V>
+			implements WeakListener<ObservableMapListener<K, V>>, ObservableMapListener<K, V> {
 		private final WeakReference<ObservableMapListener<K, V>> ref;
 
 		public Map(ObservableMapListener<K, V> listener) {
-			requireNonNull(listener);
-			ref = new WeakReference<>(listener);
+			ref = new WeakReference<>(requireNonNull(listener));
+		}
+
+		public Map(ObservableMapListener<K, V> listener, ReferenceQueue<ObservableMapListener<K, V>> queue) {
+			ref = new WeakReference<>(requireNonNull(listener), queue);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			ref.clear();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean enqueue() {
+			return ref.enqueue();
 		}
 
 		@Override
@@ -98,6 +146,14 @@ public interface WeakListener {
 			}
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public final boolean refersTo(ObservableMapListener<K, V> obj) {
+			return ref.refersTo(obj);
+		}
+
 		@Override
 		public boolean wasGarbageCollected() {
 			return ref.get() == null;
@@ -105,12 +161,39 @@ public interface WeakListener {
 
 	}
 
-	public static final class Set<E> implements WeakListener, ObservableSetListener<E> {
+	public static final class Set<E> implements WeakListener<ObservableSetListener<E>>, ObservableSetListener<E> {
 		private final WeakReference<ObservableSetListener<E>> ref;
 
 		public Set(ObservableSetListener<E> listener) {
-			requireNonNull(listener);
-			ref = new WeakReference<>(listener);
+			ref = new WeakReference<>(requireNonNull(listener));
+		}
+
+		public Set(ObservableSetListener<E> listener, ReferenceQueue<ObservableSetListener<E>> queue) {
+			ref = new WeakReference<>(requireNonNull(listener), queue);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void clear() {
+			ref.clear();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean enqueue() {
+			return ref.enqueue();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean refersTo(ObservableSetListener<E> obj) {
+			return ref.refersTo(obj);
 		}
 
 		@Override
@@ -138,6 +221,26 @@ public interface WeakListener {
 			return ref.get() == null;
 		}
 	}
+
+	/**
+	 * @see {@link WeakReference#clear()}
+	 */
+	void clear();
+
+	/**
+	 * @return
+	 *
+	 * @see {@link WeakReference#enqueue()}
+	 */
+	boolean enqueue();
+
+	/**
+	 * @param obj
+	 * @return
+	 *
+	 * @see {@link WeakReference#refersTo(Object)}
+	 */
+	boolean refersTo(T obj);
 
 	boolean wasGarbageCollected();
 }
