@@ -611,12 +611,14 @@ public final class ObservableCollections {
 	}
 
 	/**
-	 * Creates and returns an {@code ObservableList} wrapping the supplied
-	 * {@code List}.
+	 * <p>
+	 * Creates and returns an {@link ObservableList} wrapping the supplied
+	 * {@link List}.
 	 *
+	 * @param <E>  list element type
 	 * @param list the {@code List} to wrap
-	 * @return an {@code ObservableList}
-	 * @throws IllegalArgumentException if {@code list} is {@code null}
+	 * @return an {@linkplain ObservableList}
+	 * @throws NullPointerException if {@code list} is {@code null}
 	 */
 	public static <E> ObservableList<E> observableList(List<E> list) {
 		requireNonNull(list);
@@ -624,15 +626,17 @@ public final class ObservableCollections {
 	}
 
 	/**
-	 * Creates and returns an {@code ObservableListHelper} wrapping the supplied
-	 * {@code List}. If you can track changes to the underlying list, use this
-	 * method instead of {@code observableList()}.
+	 * <p>
+	 * Creates and returns an {@link ObservableListHelper} wrapping the supplied
+	 * {@link List}. If you can track changes to the underlying list, use this
+	 * method instead of {@link #observableList()}.
 	 *
-	 * @param list the {@code List} to wrap
-	 * @return an {@code ObservableList}
+	 * @param <E>  list element type
+	 * @param list the {@linkplain List} to wrap
+	 * @return an {@linkplain ObservableList}
 	 * @throws IllegalArgumentException if {@code list} is {@code null}
 	 *
-	 * @see #observableList
+	 * @see #observableList(List)
 	 */
 	public static <E> ObservableListHelper<E> observableListHelper(List<E> list) {
 		var oList = new ObservableListImpl<>(list, true);
@@ -640,11 +644,15 @@ public final class ObservableCollections {
 	}
 
 	/**
-	 * Creates and returns an {@code ObservableMap} wrapping the supplied
-	 * {@code Map}.
+	 * <p>
+	 * Creates and returns an {@link ObservableMap} wrapping the supplied
+	 * {@link Map}.
 	 *
-	 * @param map the {@code Map} to wrap
-	 * @return an {@code ObservableMap}
+	 * @param <K> map key type
+	 * @param <V> map value type
+	 * @param map the {@linkplain Map} to wrap
+	 * @return an {@linkplain ObservableMap}
+	 * @throws NullPointerException if {@code map} is {@code map}
 	 */
 	public static <K, V> ObservableMap<K, V> observableMap(Map<K, V> map) {
 		requireNonNull(map);
@@ -654,11 +662,12 @@ public final class ObservableCollections {
 	/**
 	 * <p>
 	 * Creates and returns an {@link ObservableSet} wrapping the supplied
-	 * {@linkplain Set}.
+	 * {@link Set}.
 	 *
 	 * @param <E> set element type.
-	 * @param set
-	 * @return
+	 * @param set the {@linkplain Set} to wrap
+	 * @return an {@linkplain ObservableSet}
+	 * @throws NullPointerException if {@code set} is {@code null}
 	 */
 	public static <E> ObservableSet<E> observableMap(Set<E> set) {
 		requireNonNull(set);
