@@ -199,14 +199,14 @@ public interface ObservableList<E> extends List<E> {
 	 *
 	 * @param listener the listener to add
 	 */
-	public void addObservableListListener(ObservableListListener<? super E> listener);
+	public void addObservableListListener(ObservableListListener<? extends E> listener);
 
 	/**
 	 * Removes a listener.
 	 *
 	 * @param listener the listener to remove
 	 */
-	public void removeObservableListListener(ObservableListListener<? super E> listener);
+	public void removeObservableListListener(ObservableListListener<? extends E> listener);
 
 	@Override
 	public ObservableList<E> subList(int fromIndex, int toIndex);

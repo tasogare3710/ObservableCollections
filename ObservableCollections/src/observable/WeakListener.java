@@ -34,7 +34,7 @@ public interface WeakListener<T> {
 		}
 
 		@Override
-		public void listElementPropertyChanged(ObservableList<? extends E> list, int index) {
+		public void listElementPropertyChanged(ObservableList<? super E> list, int index) {
 			var listener = ref.get();
 			if (listener != null) {
 				listener.listElementPropertyChanged(list, index);
@@ -44,7 +44,7 @@ public interface WeakListener<T> {
 		}
 
 		@Override
-		public void listElementReplaced(ObservableList<? extends E> list, int index, Object oldElement) {
+		public void listElementReplaced(ObservableList<? super E> list, int index, Object oldElement) {
 			var listener = ref.get();
 			if (listener != null) {
 				listener.listElementReplaced(list, index, oldElement);
@@ -54,7 +54,7 @@ public interface WeakListener<T> {
 		}
 
 		@Override
-		public void listElementsAdded(ObservableList<? extends E> list, int index, int length) {
+		public void listElementsAdded(ObservableList<? super E> list, int index, int length) {
 			var listener = ref.get();
 			if (listener != null) {
 				listener.listElementsAdded(list, index, length);
@@ -64,8 +64,8 @@ public interface WeakListener<T> {
 		}
 
 		@Override
-		public void listElementsRemoved(ObservableList<? extends E> list, int index,
-				java.util.List<? extends E> oldElements) {
+		public void listElementsRemoved(ObservableList<? super E> list, int index,
+				java.util.List<? super E> oldElements) {
 			var listener = ref.get();
 			if (listener != null) {
 				listener.listElementsRemoved(list, index, oldElements);
@@ -78,8 +78,8 @@ public interface WeakListener<T> {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public final boolean refersTo(ObservableListListener<E> obj) {
-			return ref.refersTo(obj);
+		public final boolean refersTo(ObservableListListener<E> listener) {
+			return ref.refersTo(listener);
 		}
 
 		@Override
@@ -238,7 +238,7 @@ public interface WeakListener<T> {
 	 * @param obj
 	 * @return
 	 *
-	 * @see {@link WeakReference#refersTo(Object)}
+	 * @see {@link WeakReference#refersTo(Object))}
 	 */
 	boolean refersTo(T obj);
 

@@ -52,26 +52,26 @@ public class ObservableListExample {
 	ObservableListExample() {
 		var a = IntStream.range(0, 16).map(x -> x * x).collect(ObservableList.<Integer>species(ArrayList::new),
 				List::add, List::addAll);
-		listener = new ObservableListListener<Integer>() {
+		listener = new ObservableListListener<>() {
 			@Override
-			public void listElementPropertyChanged(ObservableList<? extends Integer> list, int index) {
+			public void listElementPropertyChanged(ObservableList<? super Integer> list, int index) {
 				LOG.log(Level.INFO, "ElementPropertyChanged: %1$s".formatted(list.get(index)));
 			}
 
 			@Override
-			public void listElementReplaced(ObservableList<? extends Integer> list, int index, Object oldElement) {
+			public void listElementReplaced(ObservableList<? super Integer> list, int index, Object oldElement) {
 				LOG.log(Level.INFO, "ElementReplaced: %1$s to %2$s".formatted(oldElement, list.get(index)));
 			}
 
 			@Override
-			public void listElementsAdded(ObservableList<? extends Integer> list, int index, int length) {
+			public void listElementsAdded(ObservableList<? super Integer> list, int index, int length) {
 				var sublist = list.subList(index, index + length);
 				LOG.log(Level.INFO, "ElementsAdded: %1$s".formatted(sublist));
 			}
 
 			@Override
-			public void listElementsRemoved(ObservableList<? extends Integer> list, int index,
-					List<? extends Integer> oldElements) {
+			public void listElementsRemoved(ObservableList<? super Integer> list, int index,
+					List<? super Integer> oldElements) {
 				LOG.log(Level.INFO, "ElementsRemoved: %1$s".formatted(oldElements));
 			}
 		};
@@ -95,8 +95,8 @@ public class ObservableListExample {
 		var b = Stream.of(200, 300, 777).collect(ObservableCollections.toObservableList(ArrayList::new));
 		LOG.log(Level.INFO, "concat");
 		@SuppressWarnings("unchecked")
-		var c = ObservableList.concat(a, b);
-		var weakListener = new WeakListener.List<Integer>(listener);
+		var c = ObservableList.<Integer>concat(a, b);
+		var weakListener = new WeakListener.List<>(listener);
 		c.addObservableListListener(weakListener);
 
 		var seed0 = longsToBytes(nanoTime(), nanoTime(), nanoTime(), nanoTime());

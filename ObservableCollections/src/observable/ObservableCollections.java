@@ -403,4 +403,17 @@ public final class ObservableCollections {
 	public static <E> Collector<E, ObservableList<E>, ObservableList<E>> toObservableList(Supplier<List<E>> supplier) {
 		return Collector.of(ObservableList.species(supplier), List::add, ObservableList::concat);
 	}
+
+	/**
+	 * <p>
+	 * Creates and returns an unmodifiable {@link ObservableList} wrapping the
+	 * supplied {@linkplain ObservableList}.
+	 *
+	 * @param <E>
+	 * @param list
+	 * @return
+	 */
+	public static <E> ObservableList<E> unmodifiableObservableList(ObservableList<E> list) {
+		return new UnmodifiableObservableListImpl<>(list);
+	}
 }

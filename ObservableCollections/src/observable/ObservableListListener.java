@@ -23,7 +23,7 @@ public interface ObservableListListener<E> extends EventListener {
 	 * @param list  the {@code ObservableList} that has changed
 	 * @param index the index of the element that changed
 	 */
-	void listElementPropertyChanged(ObservableList<? extends E> list, int index);
+	void listElementPropertyChanged(ObservableList<? super E> list, int index);
 
 	/**
 	 * Notification that an element has been replaced by another in the list.
@@ -32,7 +32,7 @@ public interface ObservableListListener<E> extends EventListener {
 	 * @param index      the index of the element that was replaced
 	 * @param oldElement the element at the index before the change
 	 */
-	void listElementReplaced(ObservableList<? extends E> list, int index, Object oldElement);
+	void listElementReplaced(ObservableList<? super E> list, int index, Object oldElement);
 
 	/**
 	 * Notification that elements have been added to the list.
@@ -41,7 +41,7 @@ public interface ObservableListListener<E> extends EventListener {
 	 * @param index  the index the elements were added to
 	 * @param length the number of elements that were added
 	 */
-	void listElementsAdded(ObservableList<? extends E> list, int index, int length);
+	void listElementsAdded(ObservableList<? super E> list, int index, int length);
 
 	/**
 	 * Notification that elements have been removed from the list.
@@ -50,5 +50,5 @@ public interface ObservableListListener<E> extends EventListener {
 	 * @param index       the starting index the elements were removed from
 	 * @param oldElements a list containing the elements that were removed.
 	 */
-	void listElementsRemoved(ObservableList<? extends E> list, int index, List<? extends E> oldElements);
+	void listElementsRemoved(ObservableList<? super E> list, int index, List<? super E> oldElements);
 }

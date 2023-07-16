@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 final class ObservableListImpl<E> extends AbstractList<E> implements ObservableList<E> {
 	private final boolean supportsElementPropertyChanged;
 	private List<E> list;
-	private List<ObservableListListener<? super E>> listeners;
+	private List<ObservableListListener<? extends E>> listeners;
 
 	ObservableListImpl(List<E> list, boolean supportsElementPropertyChanged) {
 		this.list = list;
@@ -43,7 +43,7 @@ final class ObservableListImpl<E> extends AbstractList<E> implements ObservableL
 	}
 
 	@Override
-	public void addObservableListListener(ObservableListListener<? super E> listener) {
+	public void addObservableListListener(ObservableListListener<? extends E> listener) {
 		listeners.add(listener);
 	}
 
@@ -86,7 +86,7 @@ final class ObservableListImpl<E> extends AbstractList<E> implements ObservableL
 	}
 
 	@Override
-	public void removeObservableListListener(ObservableListListener<? super E> listener) {
+	public void removeObservableListListener(ObservableListListener<? extends E> listener) {
 		listeners.remove(listener);
 	}
 
